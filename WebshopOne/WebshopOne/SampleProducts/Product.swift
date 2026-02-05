@@ -7,12 +7,19 @@
 
 import SwiftUI
 
-struct Product: Identifiable{
+struct Product: Identifiable, Equatable{
     
     let id = UUID()
     let name: String
-    let price: Double
+    let price: Decimal
     let imageName: String
+    
+    var formattedPrice: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale.current
+        return formatter.string(from: price as NSDecimalNumber) ?? "\(price)"
+    }
     
 }
 

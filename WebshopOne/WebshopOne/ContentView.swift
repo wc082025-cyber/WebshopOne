@@ -12,6 +12,8 @@ enum DisplayMode { case grid, list }
 struct ContentView: View {
     
     // MARK: – State
+    @StateObject private var cartViewModel = CartViewModel()
+    
     @State private var mode: DisplayMode = .grid
     @State private var products = sampleProducts          // mutable copy
     @State private var sortedAscending = false
@@ -19,16 +21,19 @@ struct ContentView: View {
     // MARK: – Body
     var body: some View {
         NavigationStack {
+            ZStack {
+                Color(.white.opacity(0.5))
+                    .ignoresSafeArea()
+                
                 VStack(spacing: 0) {
                     
-                    // ---------- HEADER ----------
+                    
+                    // MARK: header
                     headerView
                         .frame(maxWidth: .infinity)   // stretch horizontally
                         .background(Color.clear)
                     
-                    // ---------- SCROLLABLE PRODUCT LIST ----------
-                    // The key line is the `frame(maxHeight: .infinity)` – it tells
-                    // the ScrollView: “take **all** the vertical space that’s left”.
+                    // MARK: scrollable product list
                     ScrollView {
                         VStack(spacing: 20) {
                             // Title
@@ -45,49 +50,52 @@ struct ContentView: View {
                             }
                         }
                         .padding(.horizontal)
-                        
-                        
                     }
                     .frame(maxWidth: .infinity)
                     .layoutPriority(1)
                     
-                    // ---------- BOTTOM TOOLBAR (sticky) ----------
-                
+                    //MARK: bottom toolbar
+                    
                     Spacer()
                     toolbarView
                         .frame(maxWidth: .infinity)
                         .background(.ultraThinMaterial)
                     
-                        
+                    
                 }
                 .ignoresSafeArea(edges: .bottom)
+            }
         
             
         }
-        
+        .environmentObject(cartViewModel)
       
     }
     
-    // MARK: – Header view (simple static graphic)
+    // MARK: – Header view
     private var headerView: some View {
         VStack {
             Image(systemName: "fossil.shell.fill")
                 .font(.system(size: 70))
                 .frame(width: 300, height: 100)
                 .background(
-                    Color.gray.opacity(0.5)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.blue.opacity(0.5)))
+                        .stroke(Color.black.opacity(1.3), lineWidth: 3)
                 )
-                .padding(.top, 0)               // tiny gap from the status bar
+            
+            
+                .padding(.top, 0)
         }
+        
         
     }
     
     
-    // MARK: – Toolbar (buttons + settings link)
+    // MARK: – Toolbar
     
     private var toolbarView: some View {
-        HStack (spacing: 30) {
+        HStack (spacing: 20) {
             // Grid view button
             Button(action: { mode = .grid }) {
                 Image(systemName: "square.grid.2x2")
@@ -109,6 +117,14 @@ struct ContentView: View {
                     .foregroundColor(sortedAscending ? .accentColor : .primary)
             }
             
+            // Shopping cart link
+            NavigationLink(destination: ShoppingCart()) {
+                Image(systemName: "cart.fill")
+                    .tint(Color.black)
+                    .font(.system(size: 40))
+                
+            }
+            
             // Settings link
             NavigationLink(destination: AccountSettings()) {
                 Image(systemName: "person.fill")
@@ -116,12 +132,12 @@ struct ContentView: View {
                     .font(.system(size: 40))
                 
             }
+        
+            
           
         }
         
         .padding()
-       // .padding(.bottom)
-       // .background(Color(UIColor.secondarySystemBackground))
     }
     
     // MARK: – Sorting helper

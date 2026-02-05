@@ -6,33 +6,38 @@
 //
 
 import SwiftUI
-
 struct ProductRow: View {
     let product: Product
-    
-    var body: some View
-    {
-        HStack{
+    @EnvironmentObject var cart: CartViewModel
+
+    var body: some View {
+        HStack {
             Image(systemName: product.imageName)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 60, height: 60)
                 .foregroundColor(.blue)
-            
-            VStack(alignment: .leading){
-                Text(product.name)
-                    .font(.headline)
-                Text("$\(String(format: "%.2f", product.price))")
+
+            VStack(alignment: .leading) {
+                Text(product.name).font(.headline)
+                Text(product.formattedPrice)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
+
             Spacer()
+
+            Button(action: { cart.add(product) }) {
+                Image(systemName: "plus.circle")
+                    .font(.title2)
+            }
+            .buttonStyle(.plain)
         }
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.yellow))
-                .stroke(Color.gray.opacity(0.4))
+                .fill(Color(.white))
+                .stroke(Color.black.opacity(1.4),lineWidth: 3)
         )
     }
 }

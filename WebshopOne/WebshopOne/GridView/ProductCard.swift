@@ -10,26 +10,40 @@ import SwiftUI
 struct ProductCard : View {
     let product: Product
     
+    @EnvironmentObject var cart: CartViewModel
+    
     var body: some View {
         VStack{
             Image(systemName: product.imageName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 80, height: 80) // image size
+                .frame(width: 100, height: 80) // image size
                 .foregroundColor(Color.blue)
             
             Text(product.name)
                 .font(Font.headline)
             
-            Text("$\(String(format: "%.2f", product.price))")
-                .font(.subheadline)
-                .foregroundColor(Color.gray)
+            Text(product.formattedPrice)
+                .font(Font.subheadline)
+            
+            Button(action: {
+                cart.add(product)
+            }) {
+               
+                Text("Add")
+                Image(systemName: "plus.circle")
+            }
+            .buttonStyle(PlainButtonStyle())
         }
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.yellow))
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .fill(Color(.white))
+                .stroke(Color.black.opacity(1.3), lineWidth: 3)
         )
     }
+}
+#Preview {
+    ProductCard(product: Product(name: "test", price: 10.00, imageName: "house"))
+        .environmentObject(CartViewModel())
 }

@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct WebshopOneApp: App {
+    @StateObject private var cart = CartViewModel()
+    
     var body: some Scene {
+        
         WindowGroup {
             ContentView()
+                .environmentObject(cart)
+            
         }
     }
 }
